@@ -23,3 +23,45 @@ df = df.drop(df.index[[3,8,12,27]])
 
 df.head()
 
+from sklearn.model_selection import train_test_split 
+from sklearn.linear_model import LogisticRegression 
+
+features = df[["POPU_LSA", "POPU_ST", "CENTLIB", "BRANLIB", "BKMOB", "TOTSTAFF"]]
+
+target = df.TOTINCM
+
+X = features
+y = target
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+lr = LogisticRegression(solver="liblinear")
+
+lr.fit(X_train, y_train)
+lr.score(X_train, y_train)
+
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score, recall_score, precision_score, fbeta_score, classification_report
+
+# Make predictions against the test set
+pred = lr.predict(X_test)
+
+# Show the confusion matrix
+print("confusion matrix:")
+print(confusion_matrix(y_test, pred))
+
+# Find the accuracy scores of the predictions against the true classes
+print("accuracy: %0.3f" % accuracy_score(y_test, pred))
+
+obs1 = {   "POPU_LSA": 50000, 
+           "POPU_ST": 50000,
+           "CENTLIB": 200,
+           "BRANLIB": 70,
+           "BKMOB": 10, 
+           "TOTSTAFF": 1500}
+
+new_fund = [obs1["POPU_LSA"], obs1["POPU_ST"], obs1["CENTLIB"], 
+            obs1["BRANLIB"], obs1["BKMOB"], obs1["TOTSTAFF"],]
+X_new = [new_fund]
+
+lr.predict(X_new)
